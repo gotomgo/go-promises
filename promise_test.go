@@ -46,7 +46,7 @@ func TestFailPromise(t *testing.T) {
 	assert.Nil(t, p.Result())
 	assert.Equal(t, testErr, p.RawResult())
 
-	//	assert.Panics(t, func() { p.Fail(testErr) })
+	assert.NotPanics(t, func() { p.Fail(testErr) })
 }
 
 func TestCancelPromise(t *testing.T) {
@@ -645,7 +645,7 @@ func TestPreSignalNotify(t *testing.T) {
 	go func(p Controller) {
 		var onWait int
 
-		myChan := make(chan Controller)
+		myChan := make(chan Controller, 1)
 
 		p.Signal(myChan)
 
@@ -658,10 +658,6 @@ func TestPreSignalNotify(t *testing.T) {
 
 		assert.Equal(t, 1, onWait)
 	}(p)
-
-	// force a sleep so the GO routine can get going prior to Succeed()
-	// Note that the time required is non-deterministic, but 800 seems to work
-	time.Sleep(800)
 }
 
 func TestBadSuccessHandler(t *testing.T) {
