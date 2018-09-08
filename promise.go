@@ -19,6 +19,10 @@ type AlwaysHandler func(promise Controller)
 // Factory is a function prototype that returns a Promise
 type Factory func() Promise
 
+// FactoryWithResult is used to pass the result of a promise to a function
+// that creates another promise
+type FactoryWithResult func(result interface{}) Promise
+
 // Promise is the interface for Promise delivery
 type Promise interface {
 	// Success registers a callback on successful delivery of the promise
@@ -67,6 +71,10 @@ type Promise interface {
 	// Chain a Promise (created via Factory) to the successful delivery of
 	// this Promise
 	Thenf(factory Factory) Promise
+
+	// ThenWithResult chains the result of a successful promise to another
+	// promise
+	ThenWithResult(factory FactoryWithResult) Promise
 
 	// Chain a list of Promises to the successful delivery of this Promise
 	ThenAll(promises ...Promise) Promise

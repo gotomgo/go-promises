@@ -555,6 +555,24 @@ func (p *promise) Thenf(factory Factory) Promise {
 	return result
 }
 
+// ThenWithResult chains the result of a successful promise to another
+// promise
+func (p *promise) ThenWithResult(factory FactoryWithResult) Promise {
+	result := NewPromise()
+
+	p.Always(func(p2 Controller) {
+		if p2.IsSuccess() {
+			factory(p2.Result()).Always(func(p3 Controller) {
+				result.DeliverWithPromise(p3)
+			})
+		} else {
+			result.DeliverWithPromise(p2)
+		}
+	})
+
+	return result
+}
+
 // all is a base implementtion of ThenAll
 func (p *promise) all(promises []Promise) Promise {
 	// how many promises must complete?
