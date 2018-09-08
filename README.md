@@ -143,3 +143,40 @@ Because GO channels are so useful as a syncrhonization mechanism, you might want
 	//
 	Signal(waitChan chan Controller) Promise
 ```
+
+### Using Then, Thenf, ThenWithResult
+The promise function Then/Thenf is essentially a Success handler that waits for a subsequent promise delivery. If the original promise is not successful, the code associated with the 2nd promise is not executed.
+
+Use **Then** when you already have a promise, or **Thenf** when you have a function that returns a promise (and takes no params).
+
+```go
+download(uri).Thenf(func() { return updateMetrics(uri)})
+
+-- or --
+
+// p1 and p2 are promises obtained previously
+download(uri).Then(p1,p2)
+```
+
+Use **ThenWithResult** when you want to change the result of an initial promise to the next promise:
+
+```go
+func cacheFile(result interface{}) promises.Promise {
+  p := NewPromise()
+
+  // do something with result. synch or asynch
+
+  return p
+}
+
+{
+  download(uri).ThenWithResult(cacheFile).Success(func(result interface{}) {
+		file := result.([]byte)
+		fmt.Printf("Downloaded %d bytes\n", len(file))
+	}).Catch(func(err error) {
+		fmt.Println("Error downloading/caching file: ", err)
+	})
+}
+```
+
+It is important to note that any use of Then involves an intermediate promise that bridges between the intital promise and subsequent promises. In the example, the Success/Catch handlers is bound to this intermediate promise, and not directly to the promise returned from _download_, or _cacheFile_. The intermediate promise will always represent the success of _cacheFile_, but could represent the failure of either the promise from _download_ or _cacheFile_. The primary reason this matters is that had we placed a Success handler between _download_ and **ThenWithResult** is would always represent the success of the _download_ promise as the intermediate promise is not created until **ThenWithResult** is called.
