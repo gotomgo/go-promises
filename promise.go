@@ -77,17 +77,46 @@ type Promise interface {
 	ThenWithResult(factory FactoryWithResult) Promise
 
 	// Chain a list of Promises to the successful delivery of this Promise
+	//
+	//	Notes
+	//		the result of the returned promise, if successful, will alwasy be
+	//		true
+	//
 	ThenAll(promises ...Promise) Promise
 
 	// Chain a list of Promises (created via Factory) to the successful
 	// delivery of this Promise
+	//
+	//	Notes
+	//		the result of the returned promise, if successful, will alwasy be
+	//		true
+	//
 	ThenAllf(factory func() []Promise) Promise
+
+	// ThenAllWithResult chains the result of a successful promise to a collection
+	// of promises that use the original result
+	//
+	//	Notes
+	//		the result of the returned promise, if successful, will alwasy be
+	//		true
+	//
+	ThenAllWithResult(factory ...FactoryWithResult) Promise
 
 	// Chain a promise to successful delivery of any one from a list of Promises after
 	// successful delivery of this Promise
+	//
+	//	Notes
+	//		the result of the returned promise, if successful, will alwasy be
+	//		true
+	//
 	ThenAny(promises ...Promise) Promise
 
 	// Chain a promise to successful delivery of any one from a list of Promises
 	// after (created via Factory) successful delivery of this Promise
+	//
+	//	Notes
+	//		the result of the returned promise, if successful, will alwasy be
+	//		true
+	//
 	ThenAnyf(factories func() []Promise) Promise
 }

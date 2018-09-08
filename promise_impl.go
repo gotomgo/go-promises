@@ -540,12 +540,22 @@ func (p *promise) Always(handler AlwaysHandler) Promise {
 }
 
 // Chain a Promise to the successful delivery of this Promise
+//
+//	Notes
+//		the result of the returned promise, if successful, will alwasy be
+//		the result of the Then promise
+//
 func (p *promise) Then(promise Promise) Promise {
 	return p.Thenf(func() Promise { return promise })
 }
 
 // Chain a Promise (created via Factory) to the successful delivery of
 // this Promise
+//
+//	Notes
+//		the result of the returned promise, if successful, will alwasy be
+//		the result of the Then promise
+//
 func (p *promise) Thenf(factory Factory) Promise {
 	result := NewPromise()
 
@@ -564,6 +574,11 @@ func (p *promise) Thenf(factory Factory) Promise {
 
 // ThenWithResult chains the result of a successful promise to another
 // promise
+//
+//	Notes
+//		the result of the returned promise, if successful, will alwasy be
+//		the result of the Then promise
+//
 func (p *promise) ThenWithResult(factory FactoryWithResult) Promise {
 	result := NewPromise()
 
@@ -572,6 +587,32 @@ func (p *promise) ThenWithResult(factory FactoryWithResult) Promise {
 			factory(p2.Result()).Always(func(p3 Controller) {
 				result.DeliverWithPromise(p3)
 			})
+		} else {
+			result.DeliverWithPromise(p2)
+		}
+	})
+
+	return result
+}
+
+// ThenAllWithResult chains the result of a successful promise to a collection
+// of promises that use the original result
+func (p *promise) ThenAllWithResult(factory ...FactoryWithResult) Promise {
+	result := NewPromise()
+
+	p.Always(func(p2 Controller) {
+		if p2.IsSuccess() {
+			// cache the result of the promise
+			presult := p2.Result()
+
+			// invoke each factory with the result and get its promise
+			var promises []Promise
+			for _, f := range factory {
+				promises = append(promises, f(presult))
+			}
+
+			// wait for all the promises to be delivered
+			result.DeliverWithPromise(p.all(promises).(Controller))
 		} else {
 			result.DeliverWithPromise(p2)
 		}
@@ -642,7 +683,7 @@ func (p *promise) any(promises []Promise) Promise {
 		promise.Always(func(p2 Controller) {
 			// deliver result based on result of promise. For Any, we only need
 			// one promise to deliver, not all of them (see all([]Promise))
-			result.DeliverWithPromise(p2)
+			result.Succeed()
 		})
 
 		// early-out in case the promise got delivered synchronously

@@ -10,7 +10,19 @@ import (
 )
 
 func postProcessImage(image interface{}) promises.Promise {
-	fmt.Println("Post processing image")
+	fmt.Println("Post processing image...")
+	// do some image post processing here. This is an example so just complete
+	return promises.NewPromise().SucceedWithResult(image)
+}
+
+func saveImageToFile(image interface{}) promises.Promise {
+	fmt.Println("Saving image to file...")
+	// do some image post processing here. This is an example so just complete
+	return promises.NewPromise().SucceedWithResult(image)
+}
+
+func cacheImage(image interface{}) promises.Promise {
+	fmt.Println("Caching image...")
 	// do some image post processing here. This is an example so just complete
 	return promises.NewPromise().SucceedWithResult(image)
 }
@@ -74,8 +86,8 @@ func main() {
 	// because this is an example, we need something to keep the main thread alive
 	var wg sync.WaitGroup
 
-	// keep-alive until the download attempt completes
-	wg.Add(1)
+	// keep-alive until the download attempts complete
+	wg.Add(2)
 
 	uri := "https://github.com/gotomgo/go-promises/tree/master/examples/testdata/image1.jpg"
 
@@ -84,6 +96,17 @@ func main() {
 	asynchImageDownload(uri).ThenWithResult(postProcessImage).Success(func(result interface{}) {
 		image := result.([]byte)
 		fmt.Printf("Downloaded %d bytes\n", len(image))
+	}).Catch(func(err error) {
+		fmt.Println("Error downloading/processing image: ", err)
+	}).Always(func(p promises.Controller) {
+		wg.Done()
+	})
+
+	// use ThenWithResult to pass the success result from asynchImageDownload to
+	// our post processing function
+	asynchImageDownload(uri).ThenAllWithResult(postProcessImage, saveImageToFile, cacheImage).Success(func(result interface{}) {
+		// Note: The successful promise result of ThenAllWithResult is alwasy true (not the result of the original promise)
+		fmt.Println("Image successfully downloaded, processed, saved, and cached")
 	}).Catch(func(err error) {
 		fmt.Println("Error downloading/processing image: ", err)
 	}).Always(func(p promises.Controller) {
