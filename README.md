@@ -158,7 +158,7 @@ download(uri).Thenf(func() { return updateMetrics(uri)})
 download(uri).Then(p1,p2)
 ```
 
-Use **ThenWithResult** when you want to change the result of an initial promise to the next promise:
+Use **ThenWithResult** when you want to chain the result of an initial promise to the next promise:
 
 ```go
 func cacheFile(result interface{}) promises.Promise {
@@ -179,4 +179,4 @@ func cacheFile(result interface{}) promises.Promise {
 }
 ```
 
-It is important to note that any use of Then involves an intermediate promise that bridges between the intital promise and subsequent promises. In the example, the Success/Catch handlers is bound to this intermediate promise, and not directly to the promise returned from _download_, or _cacheFile_. The intermediate promise will always represent the success of _cacheFile_, but could represent the failure of either the promise from _download_ or _cacheFile_. The primary reason this matters is that had we placed a Success handler between _download_ and **ThenWithResult** is would always represent the success of the _download_ promise as the intermediate promise is not created until **ThenWithResult** is called.
+It is important to note that any use of **Then** related functions involves an intermediate promise that bridges between the intital promise and subsequent promises. In the example, the Success/Catch handlers are bound to this intermediate promise, and not directly to the promise returned from _download_, or _cacheFile_. The intermediate promise will always represent the success of _cacheFile_, but could represent the failure of either the promise from _download_ or _cacheFile_. The primary reason this matters is that had we placed a Success handler between _download_ and **ThenWithResult** is would always represent the success of the _download_ promise as the intermediate promise is not created until **ThenWithResult** is called.
