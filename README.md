@@ -58,7 +58,7 @@ func consumer() {
 }
 ```
 
-In other cases you may want to use Always to perform an action or process the result.
+In other cases you may want to use **Always** to perform an action or process the result.
 
 ```go
 func consumer() {
