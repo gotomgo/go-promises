@@ -18,20 +18,19 @@ import promises "github.com/gotomgo/go-promises"
 
 3. Review the provided examples
 
-The examples can be found in the examples folder or at https://github.com/gotomgo/go-promises/tree/master/examples
+The examples can be found in the _examples_ folder, or at https://github.com/gotomgo/go-promises/tree/master/examples
 
 ## Basic Usage
 There are two primary interfaces exposed by the promises package:
 * Controller
 * Promise
 
-Controller is a super-set of Promise and is used by code that controls delivery of the promise, while
-Promise is intended for consumers that react to delivery of the promise.
+**Controller** is a super-set of **Promise** and is used by code that controls delivery of the promise, while **Promise** is intended for consumers that react to delivery of the promise.
 
 ### Creating a Promise
-The function, NewPromise, returns a Controller (which again, is a Promise) but methods that return an instance of a promise typically return Promise.
+The function, **NewPromise**, returns a **Controller** (which again, is a **Promise**) but methods that return an instance created with **NewPromise** typically return **Promise**.
 
-Here is a basic template for a method that creates and returns a Promise:
+Here is a basic template for a method that creates and returns a **Promise**:
 
 ```go
 func myFunction() promises.Promise {
@@ -47,7 +46,7 @@ func myFunction() promises.Promise {
 
 ### Using a Promise
 
-Consumers of a Promise are primarily interested in the delivery of a promise, and if it was successfully delivered, processing the result. They are also typically interested in errors as well.
+Consumers of a **Promise** are primarily interested in the delivery of a promise, and if it was successfully delivered, processing the result. They are also typically interested in errors as well.
 
 ```go
 func consumer() {
@@ -79,7 +78,7 @@ func consumer() {
 
 ### Delivering a Promise
 
-The Controller interface provides a variety of methods to deliver a Promise:
+The **Controller** interface provides a variety of methods to deliver a **Promise**:
 
 ```go
   // Succeed delivers the promise with a value of true
