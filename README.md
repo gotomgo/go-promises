@@ -35,12 +35,12 @@ Here is a basic template for a method that creates and returns a Promise:
 
 ```go
 func myFunction() promises.Promise {
-	// NewPromise returns Controller, which is a superset of Promise
-	p := promises.NewPromise()
+  // NewPromise returns Controller, which is a superset of Promise
+  p := promises.NewPromise()
 
   // perform work here. Synchronously or Asynchronously
 
-	return p
+  return p
 }
 ```
 
@@ -68,7 +68,7 @@ func consumer() {
     someFunctionUnrelatedToResult()
 
     // or process the result like follows:
-    if p.Succeeded() {
+    if p.Success() {
       result := p.Result()
     } else {
       fmt.Println("Error from myFunction: ",p.Error())
