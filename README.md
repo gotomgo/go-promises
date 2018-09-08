@@ -76,3 +76,70 @@ func consumer() {
     }
   })
 ```
+
+### Delivering a Promise
+
+The Controller interface provides a variety of methods to deliver a Promise:
+
+```go
+  // Succeed delivers the promise with a value of true
+	Succeed() Controller
+
+	// SucceedWithResult delivers the promise successfully with the specified
+	// result
+	SucceedWithResult(result interface{}) Controller
+
+	// DeliverWithPromise delivers the promise based on the result of a
+	// different Promise (Controller)
+	DeliverWithPromise(promise Controller) Controller
+
+	// Deliver delivers the promise and based on the type of the result,
+	// determines the success or failure
+	//
+	//  Notes
+	//    if result is of type error, then Fail(result.(error)), otherwise
+	//    SucceedWithResult(result)
+	//
+	Deliver(result interface{}) Controller
+
+	// Fail fails the deliver of the promise with an error
+	Fail(err error) Controller
+
+	// Cancel cancels the promise
+	//
+	//  Notes
+	//    The value of Error() will return ErrPromiseCanceled for a canceled
+	//    Promise
+	Cancel() Controller
+```
+### Using Wait and Signal
+Because GO channels are so useful as a syncrhonization mechanism, you might want to combine them with promises in some cases.
+
+```go
+	// Allows a wait on promise delivery via a channel
+	//
+	//  Notes
+	//		Blocks until the promise is delivered
+	//
+	//    Equivalent to:
+	//      p.Always(func (p Controller) {
+	//        myChan <- p
+	//      })
+	//
+	//		return <-myChan
+	//
+	Wait(chan Controller) Promise
+
+	// Use a channel as a signal when the promise is delivered without
+	// blocking
+	//
+	//  Notes
+	//    Equivalent to:
+	//      p.Always(func (p Controller) {
+	//        myChan <- p
+	//      })
+	//
+	//		return p
+	//
+	Signal(waitChan chan Controller) Promise
+```
