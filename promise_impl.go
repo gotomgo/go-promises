@@ -342,7 +342,7 @@ func (p *promise) Cancel() Controller {
 	return p.deliver(ErrPromiseCanceled)
 }
 
-// Fail fails the deliver of the promise with an error
+// Fail fails the delivery of the promise with an error
 func (p *promise) Fail(err error) Controller {
 	return p.deliver(err)
 }
@@ -373,9 +373,16 @@ func (p *promise) DeliverWithPromise(promise Controller) Controller {
 //
 //  Notes
 //    if result is of type error, then Fail(result.(error)), otherwise
-//    SucceedWithResult(result)
+//    SucceedWithResult(result), unless result is a Controller, then
+//		equivalent to DeliverWithPromise
 //
 func (p *promise) Deliver(result interface{}) Controller {
+	if result != nil {
+		if promise, ok := result.(Controller); ok {
+			return p.DeliverWithPromise(promise)
+		}
+	}
+
 	return p.deliver(result)
 }
 
