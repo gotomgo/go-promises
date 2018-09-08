@@ -38,7 +38,8 @@ func myFunction() promises.Promise {
   // NewPromise returns Controller, which is a superset of Promise
   p := promises.NewPromise()
 
-  // perform work here. Synchronously or Asynchronously
+  // perform work here. Synchronously or Asynchronously.
+  // don't forget to deliver the Promise !!
 
   return p
 }
@@ -68,7 +69,7 @@ func consumer() {
     someFunctionUnrelatedToResult()
 
     // or process the result like follows:
-    if p.Success() {
+    if p.IsSuccess() {
       result := p.Result()
     } else {
       fmt.Println("Error from myFunction: ",p.Error())
