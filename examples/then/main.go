@@ -103,10 +103,12 @@ func main() {
 	})
 
 	// use ThenWithResult to pass the success result from asynchImageDownload to
-	// our post processing function
+	// our post download functions
 	asynchImageDownload(uri).ThenAllWithResult(postProcessImage, saveImageToFile, cacheImage).Success(func(result interface{}) {
-		// Note: The successful promise result of ThenAllWithResult is alwasy true (not the result of the original promise)
-		fmt.Println("Image successfully downloaded, processed, saved, and cached")
+		// Note: The successful promise result of ThenAllWithResult is always []byte because each function
+		// delivers the original promise result (which is []byte)
+		image := result.([]byte)
+		fmt.Printf("Successfully downloaded, processed, saved, and cached image of %d bytes\n", len(image))
 	}).Catch(func(err error) {
 		fmt.Println("Error downloading/processing image: ", err)
 	}).Always(func(p promises.Controller) {
