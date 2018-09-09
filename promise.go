@@ -79,8 +79,10 @@ type Promise interface {
 	// Chain a list of Promises to the successful delivery of this Promise
 	//
 	//	Notes
-	//		the result of the returned promise, if successful, will alwasy be
-	//		true
+	//		the result of the returned promise, if successful, will be
+	//		the result of the last promise that completes. This is clearly
+	//		non-deterministic, but IFF the promises delivery results are
+	//		homogenous then the result type will be deterministic.
 	//
 	ThenAll(promises ...Promise) Promise
 
@@ -88,8 +90,10 @@ type Promise interface {
 	// delivery of this Promise
 	//
 	//	Notes
-	//		the result of the returned promise, if successful, will alwasy be
-	//		true
+	//		the result of the returned promise, if successful, will be
+	//		the result of the last promise that completes. This is clearly
+	//		non-deterministic, but IFF the promises delivery results are
+	//		homogenous then the result type will be deterministic.
 	//
 	ThenAllf(factory func() []Promise) Promise
 
@@ -97,8 +101,10 @@ type Promise interface {
 	// of promises that use the original result
 	//
 	//	Notes
-	//		the result of the returned promise, if successful, will alwasy be
-	//		true
+	//		the result of the returned promise, if successful, will be
+	//		the result of the last promise that completes. This is clearly
+	//		non-deterministic, but IFF the promises delivery results are
+	//		homogenous then the result type will be deterministic.
 	//
 	ThenAllWithResult(factory ...FactoryWithResult) Promise
 
@@ -106,8 +112,10 @@ type Promise interface {
 	// successful delivery of this Promise
 	//
 	//	Notes
-	//		the result of the returned promise, if successful, will alwasy be
-	//		true
+	//		the result of the returned promise, if successful, will be
+	//		the result of the first promise that completes. This is clearly
+	//		non-deterministic, but IFF the promises delivery results are
+	//		homogenous then the result type will be deterministic.
 	//
 	ThenAny(promises ...Promise) Promise
 
@@ -115,8 +123,10 @@ type Promise interface {
 	// after (created via Factory) successful delivery of this Promise
 	//
 	//	Notes
-	//		the result of the returned promise, if successful, will alwasy be
-	//		true
+	//		the result of the returned promise, if successful, will be
+	//		the result of the first promise that completes. This is clearly
+	//		non-deterministic, but IFF the promises delivery results are
+	//		homogenous then the result type will be deterministic.
 	//
 	ThenAnyf(factories func() []Promise) Promise
 }
