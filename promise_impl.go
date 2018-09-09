@@ -643,7 +643,7 @@ func (p *promise) all(promises []Promise) Promise {
 			} else {
 				// once all promises complete successfully, result is successful
 				if atomic.AddInt64(&count, -1) == 0 {
-					result.Succeed()
+					result.DeliverWithPromise(p2)
 				}
 			}
 		})
@@ -683,7 +683,7 @@ func (p *promise) any(promises []Promise) Promise {
 		promise.Always(func(p2 Controller) {
 			// deliver result based on result of promise. For Any, we only need
 			// one promise to deliver, not all of them (see all([]Promise))
-			result.Succeed()
+			result.DeliverWithPromise(p2)
 		})
 
 		// early-out in case the promise got delivered synchronously
